@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./login.css";
 <img src="/google.png" alt="Logo" className="login-logo" />
 
@@ -7,6 +7,16 @@ import "./login.css";
 export default function Login() {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+  const fromRedirect = location.state?.redirected;
+
+  if (!fromRedirect && !sessionStorage.getItem("welcomeShown")) {
+    alert("Please sign in to fill up the form.");
+    sessionStorage.setItem("welcomeShown", "true");
+  }
+}, [location]);
 
   const handleNext = (e) => {
     e.preventDefault();

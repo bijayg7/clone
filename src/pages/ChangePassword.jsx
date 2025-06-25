@@ -39,8 +39,9 @@ const ChangePassword = () => {
       setConfirm("");
 
       setTimeout(() => {
-      navigate("/");
+        navigate("/", { state: { redirected: true } });
         }, 2000);
+
 
     } catch (err) {
       setError("Failed to change password. Try again.");
