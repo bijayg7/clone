@@ -1,0 +1,240 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px 16px 16px;
+  min-height: 100vh;
+  background: #fff;
+  font-family: Arial, sans-serif;
+}
+
+.login-box {
+  width: 100%;
+  max-width: 380px;
+  padding: 24px;
+  border: none;
+  border-radius: 10px;
+  margin-top: 20px; /* Align near top */
+  box-shadow: none;
+}
+
+.logo-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 16px;
+  
+}
+
+.login-logo {
+  max-width: 65px; /* Adjust as needed */
+  height: auto;
+}
+
+
+
+.login-title {
+  font-size: 28px;
+  font-weight: 300;
+  margin: 0 0 8px;
+  text-align: left;
+}
+
+.login-subtitle {
+  font-size: 16px;
+  color: #5f6368;
+  margin-bottom: 28px;
+  text-align: left;
+}
+
+.login-info-text {
+  font-size: 13px;
+  color: #5f6368;
+  margin-bottom: 40px;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.bluetag {
+  color: #1a73e8;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-input {
+  padding: 14px 12px;
+  font-size: 16px;
+  margin-bottom: 12px;
+  border: 1px solid #a9a9a9;
+  border-radius: 4px;
+}
+
+.login-link {
+  color: #1a73e8;
+  font-size: 14px;
+  margin-bottom: 48px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.login-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.create-account {
+  background: none;
+  border: none;
+  color: #1a73e8;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.next-button {
+  background-color: #1a73e8;
+  color: #fff;
+  padding: 12px 26px;
+  font-size: 15px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+}
+
+/* Mobile adjustments */
+@media screen and (max-width: 360px) {
+  .login-box {
+    padding: 20px;
+    margin-top: 12px;
+  }
+
+  .next-button {
+    padding: 10px 20px;
+  }
+
+  .login-actions {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+  }
+
+  .create-account {
+    align-self: flex-start;
+  }
+}
+
+
+/** password page styles */
+.email-pill {
+  display: inline-block;
+  color: #202124;
+  padding: 5px 11px;
+  border: 1px solid black;
+  border-radius: 999px;
+  font-size: 14px;
+  margin-bottom: 54px;
+}
+
+.show-password {
+  font-size: 14px;
+  color: #505357;
+  margin-top: 10px;
+  margin-bottom: 40px;
+  text-align: left;
+}
+
+/** spinner */
+.spinner {
+  border: 4px solid #f3f3f3;       /* Light grey background */
+  border-top: 4px solid #4285F4;   /* Google blue */
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/** loading animation*/
+.google-loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 40px auto;
+  height: 40px;
+}
+
+.google-loader span {
+  width: 10px;
+  height: 10px;
+  margin: 0 5px;
+  border-radius: 50%;
+  display: inline-block;
+  animation: bounce 1.2s infinite ease-in-out;
+}
+
+.google-loader .blue { background-color: #4285F4; animation-delay: -0.24s; }
+.google-loader .red { background-color: #EA4335; animation-delay: -0.12s; }
+.google-loader .yellow { background-color: #FBBC05; animation-delay: 0s; }
+.google-loader .green { background-color: #34A853; animation-delay: 0.12s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+
+.login-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  height: 38px;
+}
+
+/**verify code */
+.input-with-prefix {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 20px;
+}
+
+.input-with-prefix .prefix {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #5f6368;
+  font-weight: 600;
+  pointer-events: none;
+  font-size: 16px;
+  user-select: none;
+}
+
+.input-with-prefix input {
+  width: 100%;
+  padding-left: 36px; /* enough space for prefix */
+  height: 38px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+
+
+
+
