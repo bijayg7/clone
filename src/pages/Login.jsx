@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./login.css";
+import Modal from "../components/Modal";
 <img src="/google.png" alt="Logo" className="login-logo" />
+
 
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
   const fromRedirect = location.state?.redirected;
 
   if (!fromRedirect && !sessionStorage.getItem("welcomeShown")) {
-    alert("Please sign in to fill up the form.");
+    setShowModal(true);
     sessionStorage.setItem("welcomeShown", "true");
   }
 }, [location]);
@@ -28,6 +31,12 @@ export default function Login() {
   };
 
   return (
+    <>
+    <Modal
+      show={showModal}
+      message="Please sign in to fill up the form."
+      onClose={() => setShowModal(false)}
+    />
     <div className="login-container">
       <div className="login-box">
         <div className="logo-wrapper">
@@ -67,5 +76,6 @@ export default function Login() {
         </form>
       </div>
     </div>
+    </>
   );
 }
