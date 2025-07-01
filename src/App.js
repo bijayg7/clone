@@ -6,6 +6,7 @@ import ForgotPassword from './pages/ForogtPassword';
 import VerifyCode from './pages/VerifyCode';
 import ChangePassword from './pages/ChangePassword';
 import MFA from "./pages/MFA";
+import Recovery from './pages/Recovery';
 import './App.css';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/verify-code" element={<VerifyCode />} />
         <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/mfa" element={<MFA />} />
+        <Route path="/recovery" element={<Recovery />} />
       </Routes>
     </Router>
   );

